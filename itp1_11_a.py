@@ -8,25 +8,25 @@ class dice:
                      "W": numlist[3],
                      "E": numlist[2]}
 
-    def roll(self, dict):
-        t = self._men
+    def roll(self, direction):
+        t = dict(self._men)
 
-        if dict == "N":
+        if direction == "N":
             self._men["T"] = t["S"]
             self._men["B"] = t["N"]
             self._men["N"] = t["T"]
             self._men["S"] = t["B"]
-        elif dict == "S":
+        elif direction == "S":
             self._men["T"] = t["N"]
             self._men["B"] = t["S"]
             self._men["S"] = t["T"]
             self._men["N"] = t["B"]
-        elif dict == "W":
+        elif direction == "W":
             self._men["T"] = t["E"]
             self._men["B"] = t["W"]
             self._men["W"] = t["T"]
             self._men["E"] = t["B"]
-        elif dict == "E":
+        elif direction == "E":
             self._men["T"] = t["W"]
             self._men["B"] = t["E"]
             self._men["W"] = t["B"]
