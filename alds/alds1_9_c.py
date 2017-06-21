@@ -1,16 +1,16 @@
 class PriorityQueue:
 
     def __init__(self):
-
-        self.q = []
-
+        self.q = {}
 
     def insert(self, k):
-        self.q.append(k)
+        self.q[k] = self.q.get(k, 0) + 1
 
     def extractMax(self):
         result = max(self.q)
-        self.q.remove(result)
+        self.q[result] -= 1
+        if self.q[result] == 0:
+            del self.q[result]
         return result
 
 
@@ -27,4 +27,3 @@ if __name__ == '__main__':
         elif al[0] == "end":
             break
 
-        max
