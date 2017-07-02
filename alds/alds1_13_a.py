@@ -1,3 +1,5 @@
+import functools
+
 QUEEN = 1
 EMPTY = 0
 directions = {(r, c) for r in range(-1, 2) for c in range(-1, 2) if not(r == 0 and c == 0)}
@@ -36,7 +38,22 @@ def isput(board, r, c):
 
     return True
 
+
+def put(board, r):
+    if r >= 8:
+        disp_board(board)
+    else:
+        if functools.reduce(lambda x, y: x or y, board[r]):
+            put(board, r+1)
+        else:
+            for c in range(8):
+                if isput(board, r, c):
+                    board[r][c] = True
+                    put(board, r+1)
+                    board[r][c] = False
+
+
 if __name__ == '__main__':
 
     board = decode()
-    disp_board(board)
+    put(board, 0)
