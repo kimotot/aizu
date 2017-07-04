@@ -1,5 +1,5 @@
 import copy
-import collections
+import queue
 
 hash_table = {}                             # 盤面（ハッシュ）を管理する辞書（テーブル）
 directions = {(1, 0), (-1, 0), (0, 1), (0, -1)}
@@ -57,7 +57,7 @@ class Board:
                 if h not in hash_table:
                     b = Board(new_board, self.n + 1, self.h)
                     board_class_list.append(b)
-                    hash_table[h] = True
+                    hash_table[h] = b
 
         return board_class_list
 
@@ -71,19 +71,19 @@ def decode():
 
 if __name__ == '__main__':
 
-    q = collections.deque()
+    q = queue.Queue()
     board = decode()
     board_c = Board(board, 0)
-    q.append(board_c)
+    q.put(board_c)
 
     flg = True
-    while len(q) != 0 and flg:
-        bc = q.popleft()
+    while not q.empty() and flg:
+        bc = q.get()
         bc_list = bc.get_next_board()
         for b in bc_list:
             if b.h == h_goal:
                 print(b.n)
                 flg = False
             else:
-                q.append(b)
+                q.put(b)
 

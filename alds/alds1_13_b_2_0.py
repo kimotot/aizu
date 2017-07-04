@@ -2,7 +2,16 @@ import copy
 import collections
 
 hash_table = {}                             # 盤面（ハッシュ）を管理する辞書（テーブル）
-directions = {(1, 0), (-1, 0), (0, 1), (0, -1)}
+directions = ((1, 3),
+              (0, 2, 4),
+              (1, 5),
+              (0, 4, 6),
+              (1, 3, 5, 7),
+              (2, 4, 8),
+              (3, 7),
+              (4, 6, 8),
+              (5, 7))
+
 h_goal = 123456780
 
 class Board:
@@ -15,18 +24,7 @@ class Board:
         self.h = self.make_hash(self.board)     # 盤面をハッシュ値に変換したもの
         self.prev = prev                        # この１手前の盤面を指すハッシュ値
         self.n = n                              # この盤面に到達するまでの手数
-        self.r0, self.c0 = self.get0()          # ０の板の位置を記憶する
-
-    def get0(self):
-        """
-        ０の板の位置を探索し返却する関数
-        :return: r,c  ０の板の位置
-        """
-        for r in range(3):
-            for c in range(3):
-                if self.board[r][c] == 0:
-                    return r, c
-        raise ValueError
+        self.space = board.index(0)             # ０の板の位置を記憶する
 
     def make_hash(self, board):
         """
@@ -34,9 +32,8 @@ class Board:
         単純に先頭から数字を連結したものをハッシュ値とする
         """
         h = 0
-        for r in board:
-            for c in r:
-                h = h * 10 + c
+        for i in board:
+            h = h * 10 + i
         return h
 
     def get_next_board(self):
@@ -47,17 +44,16 @@ class Board:
         """
         board_class_list = []
 
-        for dr, dc in directions:
-            if 0 <= self.r0 + dr < 3 and 0 <= self.c0 + dc < 3:
-                new_board = copy.deepcopy(self.board)
-                t = new_board[self.r0 + dr][self.c0 + dc]
-                new_board[self.r0 + dr][self.c0 + dc] = 0
-                new_board[self.r0][self.c0] = t
-                h = self.make_hash(new_board)
-                if h not in hash_table:
-                    b = Board(new_board, self.n + 1, self.h)
-                    board_class_list.append(b)
-                    hash_table[h] = True
+        for d in directions[self.space]:
+            new_board = copy.copy(self.board)
+            t = new_board[d]
+            new_board[d] = 0
+            new_board[self.space] = t
+            h = self.make_hash(new_board)
+            if h not in hash_table:
+                b = Board(new_board, self.n + 1, self.h)
+                board_class_list.append(b)
+                hash_table[h] = True
 
         return board_class_list
 
@@ -66,7 +62,7 @@ def decode():
     board = []
     for _ in range(3):
         al = [int(x) for x in input().split()]
-        board.append(al)
+        board.extend(al)
     return board
 
 if __name__ == '__main__':
@@ -74,16 +70,17 @@ if __name__ == '__main__':
     q = collections.deque()
     board = decode()
     board_c = Board(board, 0)
+    hash_table[board_c.h] = True
     q.append(board_c)
 
-    flg = True
-    while len(q) != 0 and flg:
+    while len(q) != 0:
         bc = q.popleft()
+
+        if bc.h == h_goal:
+            print(bc.n)
+            break
+
         bc_list = bc.get_next_board()
         for b in bc_list:
-            if b.h == h_goal:
-                print(b.n)
-                flg = False
-            else:
-                q.append(b)
+            q.append(b)
 
