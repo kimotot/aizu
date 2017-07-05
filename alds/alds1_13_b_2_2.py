@@ -12,7 +12,7 @@ directions = ((1, 3),
               (4, 6, 8),
               (5, 7))
 
-h_goal = 123456780
+h_goal = (1, 2, 3, 4, 5, 6, 7, 8, 0)
 
 class Board:
     """
@@ -21,20 +21,10 @@ class Board:
 
     def __init__(self, board, n, prev=None):
         self.board = board                      # 盤面の情報　3×3配列
-        self.h = self.make_hash(self.board)     # 盤面をハッシュ値に変換したもの
+        self.h = tuple(self.board)              # 盤面をハッシュ値に変換したもの
         self.prev = prev                        # この１手前の盤面を指すハッシュ値
         self.n = n                              # この盤面に到達するまでの手数
         self.space = board.index(0)             # ０の板の位置を記憶する
-
-    def make_hash(self, board):
-        """
-        盤面からハッシュ値を計算する
-        単純に先頭から数字を連結したものをハッシュ値とする
-        """
-        h = 0
-        for i in board:
-            h = h * 10 + i
-        return h
 
     def get_next_board(self):
         """
@@ -49,7 +39,7 @@ class Board:
             t = new_board[d]
             new_board[d] = 0
             new_board[self.space] = t
-            h = self.make_hash(new_board)
+            h = tuple(new_board)
             if h not in hash_table:
                 b = Board(new_board, self.n + 1, self.h)
                 board_class_list.append(b)
