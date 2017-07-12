@@ -40,26 +40,38 @@ def bf_search(start):
     table[tuple(start)] = True
     while len(q) > 0:
         a = q.popleft()
-        for x in adjacent[a.space]:
-            b = a.board[:]
-            b[a.space] = b[x]
-            b[x] = 0
-            key = tuple(b)
-            if key in table: continue
-            c = State(b, x, a)
-            if b == GOAL:
-                print_answer(c)
-                return
-            q.append(c)
-            table[key] = True
+        if a.board == GOAL:
+            print_answer(a)
+        else:
+            for x in adjacent[a.space]:
+                b = a.board[:]
+                b[a.space] = b[x]
+                b[x] = 0
+                key = tuple(b)
+                if key in table: continue
+                c = State(b, x, a)
+                q.append(c)
+                table[key] = True
 
 # 表示
 def print_answer(x):
-    if x is not None:
-        print_answer(x.prev)
-        print(x.board)
+    # if x is not None:
+    #     print_answer(x.prev)
+    #     print(x.board)
+    count = -1
+    while x is not None:
+        count += 1
+        x = x.prev
+    print(count)
+
+def decode():
+    board = []
+    for _ in range(3):
+        al = [int(x) for x in input().split()]
+        board.extend(al)
+    return board
 
 
 if __name__ == '__main__':
 
-    bf_search([2,5,6,7,4,0,3,8,1])
+    bf_search(decode())
