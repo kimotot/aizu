@@ -39,7 +39,7 @@ class PrioriyQueue:
     def add_boardclass(self, boardclass):
         if boardclass.h in self.entry_finder:
             self.remove_boardclass(boardclass)
-        count 
+        count
 
 class Board:
     """

@@ -10,6 +10,7 @@ def maxp(rs):
 
     return maxv
 
+
 if __name__ == '__main__':
 
     n = int(input())
