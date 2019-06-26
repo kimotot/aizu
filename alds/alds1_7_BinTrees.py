@@ -1,8 +1,8 @@
 import random
-import alds.mypkg as BT
+import alds.mylib.BinaryTree as BT
 
 
-tree = BT.BinaryTree.BinaryTree()
+tree = BT.BinaryTree()
 for _ in range(20):
     tree.insert(random.randint(0, 1000))
 tree.show_list()
