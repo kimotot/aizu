@@ -23,12 +23,13 @@ def _find(node, x):
 
 
 def _insert(node, x):
+    # nodeが空なら、xをデータとする新しいNodeオブジェクを作って返す
     if node is None:
         return Node(x)
     else:
-        if x < node.data:
+        if x < node.data:       # 左部分木にデータを挿入
             node.left_node = _insert(node.left_node, x)
-        else:
+        else:                   # 右部分木にデータを挿入
             node.right_node = _insert(node.right_node, x)
 
         # 戻り値として、挿入済の部分木を返す
@@ -82,6 +83,7 @@ def _delete(node, x):
     # 上記二つの判定文に、両方の子がNoneだった場合が含まれる
 
     else:
+        # 右部分木から最小値を見つけて根のデータを上書き。右部分木から最小値のノードを削除
         r.data = _find_min(r.right_node)
         r.right_node = _delete_min(r.right_node)
         return r
@@ -119,6 +121,14 @@ def _traverse_post(node):
         yield node.data
 
 
+def _print_bt(node, x=0):
+    if node is not None:
+        _print_bt(node.left_node, x + 1)
+        print('    ' * x, node.data)
+        _print_bt(node.right_node, x + 1)
+
+
+
 class BinaryTree:
     def __init__(self):
         self.root = None
@@ -141,8 +151,10 @@ class BinaryTree:
             func = _traverse_pre
         elif t == "in":
             func = _traverse_in
-        else:
+        elif t == "post":
             func = _traverse_post
+        else:
+            return
 
         for x in func(self.root):
             yield x
@@ -152,11 +164,14 @@ class BinaryTree:
         print([x for x in self.traverse(t)])
 
 
+    def print_bt(self):
+        _print_bt(self.root)
+
+
 if __name__ == "__main__":
     tree = BinaryTree()
     for _ in range(20):
         tree.insert(random.randint(0, 1000))
-    tree.show_list()
-    tree.delete(999)
-    tree.show_list()
+    tree.print_bt()
+
 
