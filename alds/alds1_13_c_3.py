@@ -1,7 +1,5 @@
 import copy
-import collections
 import heapq
-import itertools
 
 directions = ((1, 4),           #0
               (0, 2, 5),        #1
@@ -54,52 +52,25 @@ class Board:
             x2, y2 = goalxy[v]
             tmp += abs(x1 - x2)
             tmp += abs(y1 - y2)
-        return tmp
+        return tmp * 1.2 + self.n
 
     def __eq__(self, other):
-        if self.cost == other.cost and self.n == other.n:
-            return True
-        else:
-            return False
+        return self.cost == other.cost
 
     def __lt__(self, other):
-        if self.cost < other.cost:
-            return True
-        elif self.cost == other.cost and self.n < other.n:
-            return True
-        else:
-            return False
+        return self.cost < other.cost
 
     def __le__(self, other):
-        if self.cost < other.cost:
-            return True
-        elif self.cost == other.cost and self.n <= other.n:
-            return True
-        else:
-            return False
+        return self.cost <= other.cost
 
     def __gt__(self, other):
-        if self.cost > other.cost:
-            return True
-        elif self.cost == other.cost and self.n > other.n:
-            return True
-        else:
-            return False
+        return self.cost > other.cost
 
     def __ge__(self, other):
-        if self.cost > other.cost:
-            return True
-        elif self.cost == other.cost and self.n >= other.n:
-            return True
-        else:
-            return False
+        return self.cost >= other.cost
 
     def __ne__(self, other):
-        if self.cost == other.cost and self.n == other.n:
-            return False
-        else:
-            return True
-
+        return self.cost != other.cost
 
 def decode():
     ban = []
@@ -112,39 +83,28 @@ def decode():
 if __name__ == '__main__':
 
     ban = decode()
-    limit = 1
-    found = False
+    q = []
+    hash_table = {}  # 盤面（ハッシュ）を管理する辞書（テーブル）
 
-    while limit <= 45:
-        print(limit)
-        q = []
-        hash_table = {}  # 盤面（ハッシュ）を管理する辞書（テーブル）
+    board = Board(ban, 0)
+    hash_table[board.h] = True
+    heapq.heappush(q, board)
 
-        board = Board(ban, 0)
-        hash_table[board.h] = True
-        heapq.heappush(q, board)
+    while q:
+        board = heapq.heappop(q)
 
-        while q:
-            board = heapq.heappop(q)
-
-            if board.h == goalh:
-                print(board.n)
-                found = True
-                break
-
-            if board.n < limit and board.n + board.cost <= 45:
-                for d in directions[board.space]:
-                    new_ban = copy.copy(board.ban)
-                    t = new_ban[d]
-                    new_ban[d] = 0
-                    new_ban[board.space] = t
-                    h = tuple(new_ban)
-
-                    if h not in hash_table:
-                        heapq.heappush(q, Board(new_ban, board.n + 1))
-                        hash_table[h] = True
-
-        if found:
+        if board.h == goalh:
+            print(board.n)
             break
-        else:
-            limit += 1
+
+        for d in directions[board.space]:
+            new_ban = copy.copy(board.ban)
+            t = new_ban[d]
+            new_ban[d] = 0
+            new_ban[board.space] = t
+            h = tuple(new_ban)
+
+            if h not in hash_table:
+                heapq.heappush(q, Board(new_ban, board.n + 1))
+                hash_table[h] = True
+
