@@ -32,6 +32,8 @@ goalxy = ((3, 3),
 
 goalh = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0)
 
+e0 = (0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0)
+
 
 class Board:
     """
@@ -43,9 +45,9 @@ class Board:
         self.h = tuple(self.ban)                # 盤面をハッシュ値に変換したもの　単純にタプルに変換したもの
         self.n = n                              # この盤面に到達するまでの手数
         self.space = ban.index(0)               # ０の板の位置を記憶する
-        self.cost = self.calc_cost(ban)         # ゴールまでに係るコスト（マンハッタン数で代用）
+        self.cost = self.calc_cost()            # ゴールまでに係るコスト（マンハッタン数で代用）
 
-    def calc_cost(self, ban):
+    def calc_cost(self):
         tmp = 0
         for i, v in enumerate(self.ban):
             if v == 0:
@@ -55,7 +57,7 @@ class Board:
                 x2, y2 = goalxy[v]
                 tmp += abs(x1 - x2)
                 tmp += abs(y1 - y2)
-        return tmp * 1.2 + self.n
+        return tmp
 
     def __eq__(self, other):
         return self.cost == other.cost
@@ -87,28 +89,40 @@ def decode():
 if __name__ == '__main__':
 
     ban = decode()
-    q = []
-    hash_table = {}  # 盤面（ハッシュ）を管理する辞書（テーブル）
+    org_board = Board(ban, 0)
+    limit = org_board.cost
+    if limit % 2 == e0[org_board.space]:
+        pass
+    else:
+        limit += 1
 
-    board = Board(ban, 0)
-    hash_table[board.h] = True
-    heapq.heappush(q, board)
+    for lim in range(limit, 46, 2):
+        q = []
+        hash_table = {org_board.h: True}  # 盤面（ハッシュ）を管理する辞書（テーブル）
+        heapq.heappush(q, org_board)
+        found = False
 
-    while q:
-        board = heapq.heappop(q)
+        while q:
+            board = heapq.heappop(q)
+            if board.h == goalh:
+                print(board.n)
+                found = True
+                break
 
-        if board.h == goalh:
-            print(board.n)
+            if board.n == 39:
+                print(39, board.cost, board.ban)
+
+            if board.n + board.cost <= lim:
+                for d in directions[board.space]:
+                    new_ban = copy.copy(board.ban)
+                    t = new_ban[d]
+                    new_ban[d] = 0
+                    new_ban[board.space] = t
+                    h = tuple(new_ban)
+
+                    if h not in hash_table:
+                        heapq.heappush(q, Board(new_ban, board.n + 1))
+                        hash_table[h] = True
+
+        if found:
             break
-
-        for d in directions[board.space]:
-            new_ban = copy.copy(board.ban)
-            t = new_ban[d]
-            new_ban[d] = 0
-            new_ban[board.space] = t
-            h = tuple(new_ban)
-
-            if h not in hash_table:
-                heapq.heappush(q, Board(new_ban, board.n + 1))
-                hash_table[h] = True
-
