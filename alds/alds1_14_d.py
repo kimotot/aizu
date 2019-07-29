@@ -13,7 +13,7 @@ def calc_hash(t, tl, pl):
     res.add(tmp)
 
     BASE_K = 1
-    for _ in range(pl):
+    for _ in range(pl - 1):
         BASE_K = (BASE_K * BASE) & MASK
 
     for i in range(1, tl - pl + 1):
