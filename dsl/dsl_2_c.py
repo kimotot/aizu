@@ -1,10 +1,3 @@
-class Point:
-
-    def __init__(self, n, x, y):
-        self.n = n
-        self.x = x
-        self.y = y
-
 class Node:
 
     def __init__(self, idx):
@@ -35,13 +28,42 @@ class KDtree:
             node.right = self.make2dtree(middle + 1, right, depth + 1)
             return node
 
-    def find(self, pidx, sx, tx, sy, ty, depth):
+    def find(self, node, sx, tx, sy, ty, depth):
         ans = []
-        if sx <= self.ps[pidx][1] <= tx and sy <= self.ps[pidx][2] <= ty:
-            ans = [self.ps[pidx]]
-            if depth % 2 == 0:
-                if tx < self.ps[pidx][1]:
-                    ans.append(self.find())
-            else:
-                key = 2
+        x = self.ps[node.idx][1]
+        y = self.ps[node.idx][2]
+        if sx <= x <= tx and sy <= y <= ty:
+            ans = [self.ps[node.idx]]
 
+        if depth % 2 == 0:
+            if sx < x and node.left is not None:
+                ans += self.find(node.left, sx, tx, sy, ty, depth + 1)
+            if x < tx and node.right is not None:
+                ans += self.find(node.right, sx, tx, sy, ty, depth + 1)
+        else:
+            if sy < y and node.left is not None:
+                ans += self.find(node.left, sx, tx, sy, ty, depth + 1)
+            if y < ty and node.right is not None:
+                ans += self.find(node.right, sx, tx, sy, ty, depth + 1)
+        return ans
+
+    def display(self, sx, tx, sy, ty):
+        ans = self.find(self.root, sx, tx, sy, ty, 0)
+
+        ans.sort(key=lambda x: x[0])
+        for p in ans:
+            print(p[0])
+        print("")
+
+
+if __name__ == "__main__":
+    n = int(input())
+    a = []
+    for i in range(n):
+        a.append(tuple([i] + [int(x) for x in input().split()]))
+
+    q = int(input())
+    kd = KDtree(a)
+    for _ in range(q):
+        args = [int(x) for x in input().split()]
+        kd.display(*args)
