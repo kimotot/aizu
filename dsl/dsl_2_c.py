@@ -1,3 +1,10 @@
+import datetime
+from operator import itemgetter
+import sys
+
+input = sys.stdin.readline
+
+
 class Node:
 
     def __init__(self, idx):
@@ -21,7 +28,7 @@ class KDtree:
             else:
                 key = 2
 
-            self.ps[left:right] = sorted(self.ps[left:right], key=lambda x: x[key])
+            self.ps[left:right] = sorted(self.ps[left:right], key=itemgetter(key))
             middle = (left + right) // 2
             node = Node(middle)
             node.left = self.make2dtree(left, middle, depth + 1)
@@ -67,3 +74,30 @@ if __name__ == "__main__":
     for _ in range(q):
         args = [int(x) for x in input().split()]
         kd.display(*args)
+
+# if __name__ == "__main__":
+#     f = open("C:\\Users\\1011249\\Desktop\\in13.txt", "r")
+#     n = int(f.readline())
+#     a = []
+#
+#     start = datetime.datetime.now()
+#
+#     for i in range(n):
+#         a.append(tuple([i] + [int(x) for x in f.readline().split()]))
+#
+#     rap1 = datetime.datetime.now()
+#
+#     q = int(f.readline())
+#     kd = KDtree(a)
+#
+#     rap2 = datetime.datetime.now()
+#
+#     for _ in range(q):
+#         args = [int(x) for x in f.readline().split()]
+#         kd.display(*args)
+#
+#
+#     print(start)
+#     print(rap1)
+#     print(rap2)
+#     print(datetime.datetime.now())
