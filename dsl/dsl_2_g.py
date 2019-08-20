@@ -34,4 +34,3 @@ class RSAQ:
         self.a[0].sum = self._add(s - 1, t, x, 0, 0, self.N)
 
     def _getSum(self, s, t, i, left, right):
-        
